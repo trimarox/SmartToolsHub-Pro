@@ -1,27 +1,441 @@
-DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartToolsHub - Free Digital Tools</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body class="text-gray-100 min-h-screen overflow-x-hidden">
+-- frontend/package.json --
+{
+"name": "ai-tools-frontend",
+"version": "1.0.0",
+"private": true,
+"scripts": {
+"dev": "vite",
+"build": "vite build",
+"preview": "vite preview"
+},
+"dependencies": {
+"react": "^18.2.0",
+"react-dom": "^18.2.0",
+"react-router-dom": "^6.14.2",
+"axios": "^1.5.0",
+"tailwindcss": "^3.5.3",
+"classnames": "^2.3.2",
+"qrcode.react": "^1.0.0"
+},
+"devDependencies": {
+"vite": "^5.3.0",
+"@vitejs/plugin-react": "^4.0.0",
+"autoprefixer": "^10.4.14",
+"postcss": "^8.4.24"
+}
+}
 
-<!-- NAVIGATION -->
-<nav class="fixed top-0 w-full z-50 glass border-b border-white/10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="showDashboard()">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                    <i class="fas fa-bolt text-white text-xl"></i>
-                </div>
-                <span class="text-2xl font-bold gradient-text">SmartToolsHub</span>
-            </div>
-            <div class="hidden md:flex items-center space-x-8">
-                <button onclick="showDashboard()" class="hover:text-primary transition-colors">Dashboard</button>
-                <button onclick="
+-- frontend/vite.config.js --
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+plugins: [react()],
+build: {
+chunkSizeWarningLimit: 1000
+}
+})
+
+-- frontend/src/main.jsx --
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import App from './App'
+import './index.css'
+
+createRoot(document.getElementById('root')).render(
+<React.StrictMode>
+<BrowserRouter>
+<App />
+</BrowserRouter>
+</React.StrictMode>
+)
+
+-- frontend/src/index.css --
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Basic CSS for dark/light toggling */
+:root {
+--bg: #ffffff;
+--text: #111827;
+--muted: #6b7280;
+}
+[data-theme='dark'] {
+--bg: #0b1220;
+--text: #e6eef8;
+--muted: #9aa6b2;
+}
+body {
+background: var(--bg);
+color: var(--text);
+font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+
+-- frontend/src/App.jsx --
+import React, { useEffect, useState } from 'react'
+import { Routes, Route, Link } from 'react-router-dom'
+import Home from './pages/Home'
+import ToolPage from './pages/ToolPage'
+import ToolsList from './pages/ToolsList'
+import NotFound from './pages/NotFound'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import './index.css'
+
+export default function App() {
+const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light')
+useEffect(() => {
+document.documentElement.setAttribute('data-theme', theme === 'dark' ? 'dark' : 'light')
+localStorage.setItem('theme', theme)
+}, [theme])
+return (
+<div className="min-h-screen flex flex-col">
+<Header theme={theme} setTheme={setTheme} />
+<main className="flex-1 container mx-auto px-4 py-8">
+<Routes>
+<Route path="/" element={<Home />} />
+<Route path="/tools" element={<ToolsList />} />
+<Route path="/tool/:category/:slug" element={<ToolPage />} />
+<Route path="*" element={<NotFound />} />
+</Routes>
+</main>
+<Footer />
+</div>
+)
+}
+
+-- frontend/src/components/Header.jsx --
+import React from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import DarkModeToggle from './DarkModeToggle'
+import SearchBar from './SearchBar'
+
+export default function Header({ theme, setTheme }) {
+const loc = useLocation()
+return (
+<header className="bg-white dark:bg-gray-900 shadow-sm">
+<div className="container mx-auto px-4 py-4 flex items-center justify-between">
+<div className="flex items-center gap-4">
+<Link to="/" className="font-bold text-xl">AI Tools Hub</Link>
+<nav className="hidden md:flex gap-3 text-sm text-gray-600 dark:text-gray-300">
+<Link to="/tools">All Tools</Link>
+<Link to="/tools?category=image">Image</Link>
+<Link to="/tools?category=pdf">PDF</Link>
+<Link to="/tools?category=seo">SEO</Link>
+</nav>
+</div>
+<div className="flex items-center gap-4">
+<SearchBar />
+<DarkModeToggle theme={theme} setTheme={setTheme} />
+</div>
+</div>
+</header>
+)
+}
+
+-- frontend/src/components/DarkModeToggle.jsx --
+import React from 'react'
+export default function DarkModeToggle({ theme, setTheme }) {
+return (
+<button
+onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+className="p-2 rounded-md border"
+aria-label="Toggle dark mode"
+>
+{theme === 'dark' ? 'Light' : 'Dark'}
+</button>
+)
+}
+
+-- frontend/src/components/SearchBar.jsx --
+import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+export default function SearchBar() {
+const [q, setQ] = useState('')
+const navigate = useNavigate()
+const onSearch = (e) => {
+e.preventDefault()
+if (!q.trim()) return
+navigate(/tools?q=${encodeURIComponent(q)})
+}
+return (
+<form onSubmit={onSearch} className="flex items-center">
+<input
+value={q}
+onChange={(e) => setQ(e.target.value)}
+className="border rounded-l px-3 py-1 w-48 dark:bg-gray-800"
+placeholder="Search tools..."
+aria-label="Search tools"
+/>
+<button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-r">
+Search
+</button>
+</form>
+)
+}
+
+-- frontend/src/pages/Home.jsx --
+import React from 'react'
+import ToolCard from '../components/ToolCard'
+import tools from '../tools/all-tools.json' // list of tools with categories and slugs
+
+export default function Home() {
+const categories = [...new Set(tools.map(t => t.category))]
+return (
+<div>
+<section className="mb-8">
+<h1 className="text-3xl font-bold mb-2">AI Tools Hub — 101+ Free AI Tools</h1>
+<p className="text-gray-600">AI Chatbot, Image tools, PDF tools, SEO utilities and more. Free to use with no registration.</p>
+</section>
+
+<section>  
+    <h2 className="text-2xl font-semibold mb-4">Categories</h2>  
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">  
+      {categories.map(cat => (  
+        <div key={cat} className="p-4 border rounded">  
+          <h3 className="font-semibold">{cat}</h3>  
+          <div className="mt-3 space-y-2">  
+            {tools.filter(t=>t.category===cat).slice(0,6).map(t => (  
+              <ToolCard key={t.slug} tool={t} />  
+            ))}  
+          </div>  
+        </div>  
+      ))}  
+    </div>  
+  </section>  
+</div>
+
+)
+}
+
+-- frontend/src/components/ToolCard.jsx --
+import React from 'react'
+import { Link } from 'react-router-dom'
+export default function ToolCard({ tool }) {
+return (
+<div className="bg-white dark:bg-gray-800 p-3 rounded shadow-sm flex items-center justify-between">
+<div>
+<Link to={/tool/${tool.category}/${tool.slug}} className="font-medium">{tool.title}</Link>
+<div className="text-xs text-gray-500">{tool.short}</div>
+</div>
+<div className="text-sm text-blue-600">Use</div>
+</div>
+)
+}
+
+-- frontend/src/pages/ToolsList.jsx --
+import React from 'react'
+import { useSearchParams } from 'react-router-dom'
+import tools from '../tools/all-tools.json'
+import ToolCard from '../components/ToolCard'
+
+export default function ToolsList() {
+const [params] = useSearchParams()
+const q = params.get('q') || ''
+const category = params.get('category') || ''
+const filtered = tools.filter(t => {
+if (category && t.category !== category) return false
+if (q && !(${t.title} ${t.short} ${t.tags || ''}.toLowerCase().includes(q.toLowerCase()))) return false
+return true
+})
+return (
+<div>
+<h1 className="text-2xl font-bold mb-4">All Tools</h1>
+<div className="grid gap-3">{filtered.map(t => <ToolCard key={t.slug} tool={t} />)}</div>
+</div>
+)
+}
+
+-- frontend/src/pages/ToolPage.jsx --
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import tools from '../tools/all-tools.json'
+import axios from 'axios'
+
+export default function ToolPage() {
+const { category, slug } = useParams()
+const tool = tools.find(t => t.category === category && t.slug === slug)
+const [loading, setLoading] = useState(false)
+const [result, setResult] = useState(null)
+useEffect(() => {
+document.title = tool ? ${tool.title} — AI Tools Hub : 'Tool — AI Tools Hub'
+}, [tool])
+if (!tool) return <div>Tool not found</div>
+// Example: simple QR code and password tool implementations inline
+return (
+<div>
+<h1 className="text-2xl font-bold">{tool.title}</h1>
+<p className="text-gray-600 mb-4">{tool.description}</p>
+
+{tool.slug === 'qr-code-generator' && (  
+    <div className="p-4 border rounded">  
+      <QRCodeTool />  
+    </div>  
+  )}  
+
+  {tool.slug === 'password-generator' && (  
+    <PasswordTool />  
+  )}  
+
+  {tool.slug === 'ai-chatbot' && (  
+    <AIChat />  
+  )}  
+
+  {/* Placeholder for other tools: upload forms go to /api/... */}  
+  {tool.slug === 'ai-blog-generator' && <AIBlog />}  
+
+  <div className="mt-4">  
+    <h3 className="text-sm text-gray-500">Result</h3>  
+    <pre className="bg-gray-100 dark:bg-gray-900 p-3 rounded">{result ? JSON.stringify(result, null, 2) : 'No result yet'}</pre>  
+  </div>  
+</div>
+
+)
+}
+
+/* Inline small components below for brevity */
+function QRCodeTool() {
+const [text, setText] = useState('https://ai-tools.example')
+return (
+<div className="flex gap-4 items-start">
+<div className="flex-1">
+<label className="block text-sm mb-1">Text / URL</label>
+<input className="w-full border rounded px-3 py-2" value={text} onChange={(e)=>setText(e.target.value)} />
+</div>
+<div className="p-4 border rounded bg-white dark:bg-gray-800">
+<img src={/api/qr?text=${encodeURIComponent(text)}} alt="qr" />
+</div>
+</div>
+)
+}
+function PasswordTool() {
+const [len, setLen] = useState(16)
+const [pwd, setPwd] = useState('')
+return (
+<div>
+<div className="flex items-center gap-3">
+<input type="number" value={len} onChange={(e)=>setLen(Number(e.target.value))} className="w-24 border rounded px-2 py-1" />
+<button className="bg-blue-600 text-white px-3 py-1 rounded" onClick={()=>{
+fetch(/api/password?len=${len}).then(r=>r.json()).then(d=>setPwd(d.password))
+}}>Generate</button>
+</div>
+<div className="mt-3 p-3 border rounded bg-gray-50 dark:bg-gray-900">{pwd || 'No password yet'}</div>
+</div>
+)
+}
+function AIChat() {
+const [prompt, setPrompt] = useState('Hello!')
+const [resp, setResp] = useState('')
+const [loading, setLoading] = useState(false)
+const send = async () => {
+setLoading(true)
+try{
+const r = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type':'application/json' }, body: JSON.stringify({ prompt }) })
+const data = await r.json()
+setResp(data.reply || JSON.stringify(data))
+}catch(err){ setResp('Error: '+String(err)) }
+setLoading(false)
+}
+return (
+<div>
+<textarea className="w-full border rounded px-3 py-2" rows={4} value={prompt} onChange={(e)=>setPrompt(e.target.value)} />
+<div className="flex gap-2 mt-2">
+<button onClick={send} className="bg-green-600 text-white px-3 py-1 rounded">{loading ? '...' : 'Send'}</button>
+</div>
+<div className="mt-3 p-3 border rounded bg-gray-50 dark:bg-gray-900">{resp}</div>
+</div>
+)
+}
+function AIBlog() {
+const [topic, setTopic] = useState('Best growth hacks for startups in 2026')
+const [loading, setLoading] = useState(false)
+const [out, setOut] = useState('')
+const generate = async () => {
+setLoading(true)
+const r = await fetch('/api/ai/blog', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ topic }) })
+const json = await r.json()
+setOut(json.content || JSON.stringify(json))
+setLoading(false)
+}
+return (
+<div>
+<input className="w-full border rounded px-3 py-2" value={topic} onChange={(e)=>setTopic(e.target.value)} />
+<button className="mt-2 bg-indigo-600 text-white px-3 py-1 rounded" onClick={generate}>{loading ? 'Generating...' : 'Generate Blog'}</button>
+<div className="mt-3 p-3 border rounded bg-gray-50 dark:bg-gray-900 whitespace-pre-wrap">{out}</div>
+</div>
+)
+}
+
+-- frontend/src/pages/NotFound.jsx --
+import React from 'react'
+export default function NotFound(){ return <div>Page not found</div> }
+
+-- frontend/src/tools/all-tools.json --
+[
+{"title":"AI Chatbot","category":"ai","slug":"ai-chatbot","short":"Chat with an AI assistant","description":"A GPT-powered chatbot."},
+{"title":"QR Code Generator","category":"utilities","slug":"qr-code-generator","short":"Create QR codes","description":"Generate QR codes for URLs and text."},
+{"title":"Password Generator","category":"security","slug":"password-generator","short":"Generate secure passwords","description":"Create random secure passwords."},
+{"title":"AI Blog Generator","category":"ai","slug":"ai-blog-generator","short":"Generate blog posts","description":"AI-powered blog writing tool."}
+/* Expand this JSON with all your tools (image/pdf/seo lists) */
+]
+
+B. Backend (server) code (Node + Express)
+
+-- server/package.json --
+{
+"name": "ai-tools-server",
+"version": "1.0.0",
+"main": "server.js",
+"scripts": {
+"start": "node server.js",
+"dev": "nodemon server.js"
+},
+"dependencies": {
+"express": "^4.18.2",
+"axios": "^1.5.0",
+"multer": "^1.4.5-lts.1",
+"sharp": "^0.32.1",
+"pdf-lib": "^1.17.1",
+"qrcode": "^1.5.1",
+"cors": "^2.8.5",
+"helmet": "^7.0.0",
+"dotenv": "^16.3.1",
+"openai": "^4.0.1",
+"crypto": "^1.0.1",
+"express-rate-limit": "^6.8.0"
+}
+}
+
+-- server/.env.example --
+PORT=8080
+OPENAI_API_KEY=sk-...
+S3_BUCKET=
+S3_ENDPOINT=
+RATE_LIMIT_MAX=60
+RATE_LIMIT_WINDOW=60
+
+-- server/server.js --
+require('dotenv').config()
+const express = require('express')
+const cors = require('cors')
+const helmet = require('helmet')
+const path = require('path')
+const rateLimit = require('express-rate-limit')
+const qrRouter = require('./routes/qr')
+const passwordRouter = require('./routes/password')
+const chatRouter = require('./routes/chat')
+const aiRouter = require('./routes/ai')
+const toolsRouter = require('./routes/tools')
+
+const app = express()
+app.use(helmet())
+app.use(cors({ origin: true }))
+app.use(express.json({ limit: '1mb' }))
+app.use(express.urlencoded({ extended: true }))
+
+const limiter = rateLimit({
+windowMs: (Number(proce
