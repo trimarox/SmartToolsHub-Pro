@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartToolsHub - Free Digital Tools</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="text-gray-100 min-h-screen overflow-x-hidden">
+
+<!-- NAVIGATION -->
+<nav class="fixed top-0 w-full z-50 glass border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="showDashboard()">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+                    <i class="fas fa-bolt text-white text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold gradient-text">SmartToolsHub</span>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <button onclick="showDashboard()" class="hover:text-primary transition-colors">Dashboard</button>
+                <button onclick="scrollToTools()" class="hover:text-primary transition-colors">All Tools</button>
+                <button class="btn-primary px-6 py-2 rounded-full font-medium">Get Started</button>
+            </div>
+            <button class="md:hidden text-2xl" onclick="toggleMobileMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </div>
+    <div id="mobileMenu" class="hidden md:hidden glass border-t border-white/10">
+        <div class="px-4 pt-2 pb-4 space-y-2">
+            <button onclick="showDashboard()" class="block w-full text-left py-2 hover:text-primary">Dashboard</button>
+            <button onclick="scrollToTools()" class="block w-full text-left py-2 hover:text-primary">All Tools</button>
+        </div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="pt-32 pb-20 px-4 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto text-center relative z-10">
+        <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+            Powerful Digital Tools <br>
+            <span class="gradient-text">Accessible to Everyone</span>
+        </h1>
+        <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-10">
+            SmartToolsHub makes powerful digital tools accessible to everyone for free. Boost your productivity now!
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button onclick="scrollToTools()" class="btn-primary px-8 py-4 rounded-full font-semibold text-lg flex items-center justify-center gap-2">
+                <i class="fas fa-rocket"></i> Explore Tools
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- TOOLS GRID -->
+<section id="tools" class="py-20 px-4">
+    <div class="max-w-7xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">Choose Your Tool</h2>
+            <p class="text-gray-400">Select from our collection of powerful, free utilities</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- TOOL CARDS -->
+            <div onclick="openTool('paraphraser')" class="glass-card rounded-2xl p-6 cursor-pointer group">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-sync-alt text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">AI Paraphraser</h3>
+                <p class="text-gray-400 text-sm mb-4">Rewrite and enhance your text</p>
+            </div>
+            <div onclick="openTool('youtube')" class="glass-card rounded-2xl p-6 cursor-pointer group">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fab fa-youtube text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">YouTube Titles</h3>
+                <p class="text-gray-400 text-sm mb-4">Generate viral, click-worthy video titles</p>
+            </div>
+            <div onclick="openTool('tiktok')" class="glass-card rounded-2xl p-6 cursor-pointer group">
+                <div class="w-14 h-14 rounded-xl bg-black flex items-center justify-center mb-4 group-hover:scale-110 transition-transform border border-white/20">
+                    <i class="fab fa-tiktok text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">TikTok Hooks</h3>
+                <p class="text-gray-400 text-sm mb-4">Stop the scroll with catchy hooks</p>
+            </div>
+            <div onclick="openTool('qr')" class="glass-card rounded-2xl p-6 cursor-pointer group">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-green-500 to-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-qrcode text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">QR Generator</h3>
+                <p class="text-gray-400 text-sm mb-4">Create custom QR codes</p>
+            </div>
+            <div onclick="openTool('password')" class="glass-card rounded-2xl p-6 cursor-pointer group">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-key text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Password Gen</h3>
+                <p class="text-gray-400 text-sm mb-4">Strong & secure passwords</p>
+            </div>
+            <div onclick="openTool('bgremover')" class="glass-card rounded-2xl p-6 cursor-pointer group">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-magic text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">BG Remover</h3>
+                <p class="text-gray-400 text-sm mb-4">Remove backgrounds instantly</p>
+            </div>
+            <div onclick="openTool('resume')" class="glass-card rounded-2xl p-6 cursor-pointer group">
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-file-alt text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-2">Resume Builder</h3>
+                <p class="text-gray-400 text-sm mb-4">Create professional resumes</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TOOL INTERFACES -->
+<div id="toolContainer" class="hidden min-h-screen pt-20 pb-10 px-4">
+    <div class="max-w-6xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+            <button onclick="showDashboard()" class="flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
+                <i class="fas fa-arrow-left"></i> Back
+            </button>
+            <div id="toolTitle" class="text-2xl font-bold gradient-text"></div>
+            <div class="w-24"></div>
+        </div>
+
+        <!-- PARAPHRASER -->
+        <div id="paraphraser" class="tool-section hidden">
+            <textarea id="paraInput" placeholder="Enter text..." class="input-field w-full h-64 p-4 rounded-xl mb-4"></textarea>
+            <button onclick="paraphraseText()" class="btn-primary px-6 py-3 rounded-xl mb-4">Paraphrase</button>
+            <textarea id="paraOutput" placeholder="Result..." class="input-field w-full h-64 p-4 rounded-xl" readonly></textarea>
+        </div>
+
+        <!-- YOUTUBE -->
+        <div id="youtube" class="tool-section hidden">
+            <input id="ytTopic" placeholder="Video topic..." class="input-field w-full p-4 rounded-xl mb-4">
+            <select id="ytTone" class="input-field w-full p-4 rounded-xl mb-4">
+                <option value="clickbait">Clickbait/Viral</option>
+                <option value="educational">Educational</option>
+            </select>
+            <button onclick="generateYTTitle()" class="btn-primary px-6 py-3 rounded-xl mb-4">Generate Title</button>
+            <textarea id="ytOutput" placeholder="Title will appear here..." class="input-field w-full h-64 p-4 rounded-xl" readonly></textarea>
+        </div>
+
+        <!-- TIKTOK -->
+        <div id="tiktok" class="tool-section hidden">
+            <input id="ttTopic" placeholder="Enter topic..." class="input-field w-full p-4 rounded-xl mb-4">
+            <button onclick="generateTikTokHook()" class="btn-primary px-6 py-3 rounded-xl mb-4">Generate Hook</button>
+            <textarea id="ttOutput" placeholder="Hook result..." class="input-field w-full h-64 p-4 rounded-xl" readonly></textarea>
+        </div>
+
+        <!-- QR CODE -->
+        <div id="qr" class="tool-section hidden">
+            <input id="qrInput" placeholder="Enter URL or text..." class="input-field w-full p-4 rounded-xl mb-4">
+            <button onclick="generateQRCode()" class="btn-primary px-6 py-3 rounded-xl mb-4">Generate QR</button>
+            <div id="qrOutput" class="flex justify-center items-center"></div>
+        </div>
+
+        <!-- PASSWORD -->
+        <div id="password" class="tool-section hidden">
+            <input type="number" id="pwdLength" placeholder="Length (default 12)" class="input-field w-full p-4 rounded-xl mb-4">
+            <button onclick="generatePassword()" class="btn-primary px-6 py-3 rounded-xl mb-4">Generate Password</button>
+            <textarea id="pwdOutput" placeholder="Password appears here..." class="input-field w-full h-64 p-4 rounded-xl" readonly></textarea>
+        </div>
+
+        <!-- BG REMOVER -->
+        <div id="bgremover" class="tool-section hidden">
+            <input type="file" id="bgFile" class="input-field w-full p-4 rounded-xl mb-4">
+            <button onclick="removeBackground()" class="btn-primary px-6 py-3 rounded-xl mb-4">Remove Background</button>
+            <div id="bgOutput"></div>
+        </div>
+
+        <!-- RESUME -->
+        <div id="resume" class="tool-section hidden">
+            <input id="resName" placeholder="Full Name" class="input-field w-full p-4 rounded-xl mb-2">
+            <input id="resRole" placeholder="Desired Role" class="input-field w-full p-4 rounded-xl mb-2">
+            <textarea id="resSummary" placeholder="Professional Summary" class="input-field w-full p-4 rounded-xl mb-4"></textarea>
+            <button onclick="generateResume()" class="btn-primary px-6 py-3 rounded-xl mb-4">Generate Resume</button>
+            <textarea id="resOutput" placeholder="Resume will appear here..." class="input-field w-full h-64 p-4 rounded-xl" readonly></textarea>
+        </div>
+
+    </div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
+body {
+    background: linear-gradient(135deg,#0f172a,#1e293b);
+    font-family: 'Inter', sans-serif;
+}
+.glass, .glass-card {
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+.glass-card:hover {
+    background: rgba(255,255,255,0.08);
+    transform: translateY(-5px);
+    border-color: rgba(99,102,241,0.3);
+}
+.btn-primary {
+    background: linear-gradient(135deg,#6366f1,#8b5cf6);
+    color:white;
+    transition: all 0.3s ease;
+}
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(99,102,241,0.4);
+}
+.gradient-text {
+    background: linear-gradient(135deg,#6366f1,#ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.input-field {
+    background: rgba(15,23,42,0.6);
+    border:1px solid rgba(255,255,255,0.1);
+    color:white;
+    transition: all 0.3s ease;
+}
+.input-field:focus {
+    border-color: #6366f1;
+    outline: none;
+    box-shadow:0 0 0 3px rgba(99,102,241,0.1);
+}
+// Tool switching
+function openTool(toolId) {
+    document.querySelectorAll('.tool-section').forEach(t => t.classList.add('hidden'));
+    document.getElementById('toolContainer').classList.remove('hidden');
+    document.getElementById(toolId).classList.remove('hidden');
+    document.getElementById('toolTitle').innerText = toolId.charAt(0).toUpperCase() + toolId.slice(1);
+}
+function showDashboard(){document.getElementById('toolContainer').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'});}
+function toggleMobileMenu(){document.getElementById('mobileMenu').classList.toggle('hidden');}
+function scrollToTools(){document.getElementById('tools').scrollIntoView({behavior:'smooth'});}
+function copyToClipboard(id){navigator.clipboard.writeText(document.getElementById(id).value).then(()=>alert('Copied!'));}
+function paraphraseText(){const i=document.getElementById('paraInput').value;if(!i)return alert('Enter text!');document.getElementById('paraOutput').value='Generating...';setTimeout(()=>{document.getElementById('paraOutput').value=i.split(' ').reverse().join(' ')},1000);}
+function generateYTTitle(){const t=document.getElementById('ytTopic').value;const s=document.getElementById('ytTone').value;if(!t)return alert('Enter topic!');document.getElementById('ytOutput').value=`🔥 ${s.toUpperCase()} title for "${t}"`;}
+function generateTikTokHook(){const t=document.getElementById('ttTopic').value;if(!t)return alert('Enter topic!');document.getElementById('ttOutput').value=`⚡ Hook for "${t}" - Stop the scroll!`;}
+function generateQRCode(){const u=document.getElementById('qrInput').value;if(!u)return alert('Enter URL/text!');document.getElementById('qrOutput').innerHTML='';new QRCode(document.getElementById('qrOutput'),u);}
+function generatePassword(){const l=parseInt(document.getElementById('pwdLength').value)||12;const c="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";let p='';for(let i=0;i<l;i++){p+=c.charAt(Math.floor(Math.random()*c.length));}document.getElementById('pwdOutput').value=p;}
+function removeBackground(){const f=document.getElementById('bgFile').files[0];if(!f)return alert('Select image!');document.getElementById('bgOutput').innerHTML=`<p class="text-green-400">Background removed (placeholder)</p>`;}
+function generateResume(){const n=document.getElementById('resName').value,r=document.getElementById('resRole').value,s=document.getElementById('resSummary').value;if(!n||!r||!s)return alert('Fill all fields!');document.getElementById('resOutput').value=`Name: ${n}\nRole: ${r}\nSummary: ${s}\nSkills: ...\nExperience: ...`;}
